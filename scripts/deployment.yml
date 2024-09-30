@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+        - name: book-catalog
+          image: clanita/myapp:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://clanita_sit722_part1_8nso_user:SP8eRKsjZKxIzzx72MOboE9PYOIF7RSL@dpg-crt76s5ds78s73eccdog-a.oregon-postgres.render.com/clanita_sit722_part1_8nso"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog-service
+spec:
+  selector:
+    app: book-catalog
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30001  # NodePort for accessing the service externally
